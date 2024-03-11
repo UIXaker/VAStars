@@ -11,7 +11,7 @@ class VAStars: UIView {
         )
         view.alpha = configuration.animationType != .none ? 0 : 1
         view.setDefault(borderColor: configuration.borderColor, starColor: configuration.defaultColor)
-        
+
         return view
     }()
     
@@ -22,7 +22,7 @@ class VAStars: UIView {
         )
         view.alpha = configuration.animationType != .none ? 0 : 1
         view.setDefault(borderColor: configuration.borderColor, starColor: configuration.defaultColor)
-        
+
         return view
     }()
     
@@ -44,7 +44,7 @@ class VAStars: UIView {
         addSubview(firstStarView)
         addSubview(secondStarView)
         addSubview(thirdStarView)
-        
+
         setupConstraints()
     }
     
@@ -132,18 +132,20 @@ class VAStars: UIView {
     
     private func scaleAnimation(with duration: TimeInterval, scale factor: CGFloat, completion: (() -> Void)? = nil) {
         let transform = CGAffineTransform(scaleX: factor, y: factor)
-        let firstTransform = transform.translatedBy(x: configuration.hSpacing + configuration.starSize, y: 0)
-        let thirdTransform = transform.translatedBy(x: configuration.hSpacing - configuration.starSize, y: 0)
-                
-        firstStarView.transform = firstTransform
-        secondStarView.transform = transform
-        thirdStarView.transform = thirdTransform
+        
+        let size = configuration.starSize
+        let scaleSize = size * factor
+        let tx = (size - scaleSize + scaleSize/3) / factor
                         
+        firstStarView.transform = transform.translatedBy(x: tx, y: 0)
+        secondStarView.transform = transform
+        thirdStarView.transform = transform.translatedBy(x: -tx, y: 0)
+        
         UIView.animate(withDuration: duration, delay: 0, options: .curveEaseOut, animations: {
             self.firstStarView.alpha = 1
             self.secondStarView.alpha = 1
             self.thirdStarView.alpha = 1
-
+            
             self.firstStarView.transform = .identity
             self.secondStarView.transform = .identity
             self.thirdStarView.transform = .identity
@@ -188,4 +190,8 @@ extension UIColor {
            blue: hex & 0xFF
        )
    }
+}
+
+#Preview(traits: .portrait) {
+    return ViewController()
 }

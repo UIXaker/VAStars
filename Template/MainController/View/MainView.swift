@@ -6,7 +6,8 @@ class MainView: UIView {
         let configuration = VAStarsConfiguration(
             borderColor: .init(hex: 0x929292),
             defaultColor: .init(hex: 0x929292),
-            animationType: .fade(duration: 0.3, deley: 0.15)
+            animationType: .scale(duration: 3, factor: 0.6)
+//                    .fade(duration: 0.3, deley: 0.15)
         )
         
        return VAStars(configuration: configuration)
