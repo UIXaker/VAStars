@@ -40,7 +40,7 @@ class VASingleStar: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func show(animated flag: Bool = false, deley: TimeInterval = 0.0, comletion: (() -> Void)? = nil) {
+    func show(animated flag: Bool = false, delay: TimeInterval = 0.0, comletion: (() -> Void)? = nil) {
         if !flag {
             fillStarImageView.alpha = 1
             comletion?()
@@ -49,7 +49,7 @@ class VASingleStar: UIView {
         
         fillStarImageView.transform = CGAffineTransform(translationX: 0, y: -starSize/1.5)
         
-        UIView.animate(withDuration: 0.66, delay: deley, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.7, options: .curveEaseInOut) {
+        UIView.animate(withDuration: 0.66, delay: delay, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.7, options: .curveEaseInOut) {
             self.isAnimating = true
             self.fillStarImageView.alpha = 1
             self.fillStarImageView.transform = .identity
@@ -59,8 +59,8 @@ class VASingleStar: UIView {
         }
     }
     
-    func animate(withDuration duration: TimeInterval = 0.3, color: UIColor, completion: (() -> Void)? = nil) {
-        UIView.animate(withDuration: duration, animations: {
+    func animate(withDuration duration: TimeInterval = 0.3, delay: TimeInterval, color: UIColor, completion: (() -> Void)? = nil) {
+        UIView.animate(withDuration: duration, delay: delay, animations: {
             self.fillStarImageView.tintColor = color
         }) { _ in
             completion?()

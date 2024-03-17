@@ -59,8 +59,8 @@ class VAStars: UIView {
         }
         
         switch configuration.animationType {
-        case .fade(let duration, let deley):
-            fadeAnimation(with: duration, deley: deley, completion: completion)
+        case .fade(let duration, let delay):
+            fadeAnimation(with: duration, delay: delay, completion: completion)
         case .scale(let duration, let factor):
             scaleAnimation(with: duration, scale: factor, completion: completion)
         case .none:
@@ -72,35 +72,35 @@ class VAStars: UIView {
     /// - Parameters:
     ///   - type: Сколько звезд упадет и с каким цветом будет каждая из звезд
     ///   - flag: Нужна ли анимация для падения звезд
-    ///   - firstDeley: Задержка перед падением первой звезды
-    ///   - deley: Задержка перед падением следующей звезды
+    ///   - firstDelay: Задержка перед падением первой звезды
+    ///   - delay: Задержка перед падением следующей звезды
     ///   - completion: Метод вызывается после анимации падения и анимации заливки всех цветов
-    func fillStars(fill type: VAStarsConfiguration.FillType, animated flag: Bool, firstDeley: TimeInterval, deley: TimeInterval, completion: @escaping () -> Void) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + firstDeley) {
+    func fillStars(fill type: VAStarsConfiguration.FillType, animated flag: Bool, firstDelay: TimeInterval, delay: TimeInterval, completion: @escaping () -> Void) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + firstDelay) {
             switch type {
             case .one(let first):
                 self.firstStarView.show(animated: flag) { [weak self] in
-                    self?.firstStarView.animate(color: first, completion: completion)
+                    self?.firstStarView.animate(delay: 0.0, color: first, completion: completion)
                 }
                 
             case .two(let first, let second):
                 self.firstStarView.show(animated: flag)
-                self.secondStarView.show(animated: flag, deley: deley) { [weak self] in
+                self.secondStarView.show(animated: flag, delay: delay) { [weak self] in
                     guard let self = self else { return }
                     
-                    self.firstStarView.animate(color: first)
-                    self.secondStarView.animate(color: second, completion: completion)
+                    self.firstStarView.animate(delay: 0.0, color: first)
+                    self.secondStarView.animate(delay: 0.15, color: second, completion: completion)
                 }
                 
             case .three(let first, let second, let third):
                 self.firstStarView.show(animated: flag)
-                self.secondStarView.show(animated: flag, deley: deley)
-                self.thirdStarView.show(animated: flag, deley: deley * 2) { [weak self] in
+                self.secondStarView.show(animated: flag, delay: delay)
+                self.thirdStarView.show(animated: flag, delay: delay * 2) { [weak self] in
                     guard let self = self else { return }
                     
-                    self.firstStarView.animate(color: first)
-                    self.secondStarView.animate(color: second)
-                    self.thirdStarView.animate(color: third, completion: completion)
+                    self.firstStarView.animate(delay: 0.0, color: first)
+                    self.secondStarView.animate(delay: 0.15, color: second)
+                    self.thirdStarView.animate(delay: 0.3, color: third, completion: completion)
                 }
             }
         }
@@ -114,16 +114,16 @@ class VAStars: UIView {
         completion?()
     }
     
-    private func fadeAnimation(with duration: TimeInterval, deley: TimeInterval, completion: (() -> Void)? = nil) {
+    private func fadeAnimation(with duration: TimeInterval, delay: TimeInterval, completion: (() -> Void)? = nil) {
         UIView.animate(withDuration: duration) {
             self.firstStarView.alpha = 1
         }
         
-        UIView.animate(withDuration: duration, delay: deley) {
+        UIView.animate(withDuration: duration, delay: delay) {
             self.secondStarView.alpha = 1
         }
         
-        UIView.animate(withDuration: duration, delay: deley * 2, animations: {
+        UIView.animate(withDuration: duration, delay: delay * 2, animations: {
             self.thirdStarView.alpha = 1
         }) { _ in
             completion?()

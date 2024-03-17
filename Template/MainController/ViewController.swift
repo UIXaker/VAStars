@@ -20,7 +20,7 @@ class ViewController: UIViewController {
                 .init(hex: 0x1DB954)
             )
             
-            self?.mainView.starsView.fillStars(fill: conf, animated: true, firstDeley: 0.3, deley: 0.15) {
+            self?.mainView.starsView.fillStars(fill: conf, animated: true, firstDelay: 0.3, delay: 0.15) {
                 
             }
         }
