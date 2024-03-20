@@ -52,7 +52,7 @@ class VAStars: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func show(animated flag: Bool, completion: (() -> Void)? = nil) {
+    func show(animated flag: Bool, completion: ((VAStars) -> Void)? = nil) {
         if !flag {
             noAnimation(completion: completion)
             return
@@ -78,6 +78,7 @@ class VAStars: UIView {
     func fillStars(fill type: VAStarsConfiguration.FillType, animated flag: Bool, firstDelay: TimeInterval, delay: TimeInterval, completion: @escaping () -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + firstDelay) {
             switch type {
+            case .zero: break
             case .one(let first):
                 self.firstStarView.show(animated: flag) { [weak self] in
                     self?.firstStarView.animate(delay: 0.0, color: first, completion: completion)
@@ -106,15 +107,15 @@ class VAStars: UIView {
         }
     }
     
-    private func noAnimation(completion: (() -> Void)?) {
+    private func noAnimation(completion: ((VAStars) -> Void)?) {
         firstStarView.alpha = 1
         secondStarView.alpha = 1
         thirdStarView.alpha = 1
         
-        completion?()
+        completion?(self)
     }
     
-    private func fadeAnimation(with duration: TimeInterval, delay: TimeInterval, completion: (() -> Void)? = nil) {
+    private func fadeAnimation(with duration: TimeInterval, delay: TimeInterval, completion: ((VAStars) -> Void)? = nil) {
         UIView.animate(withDuration: duration) {
             self.firstStarView.alpha = 1
         }
@@ -126,11 +127,11 @@ class VAStars: UIView {
         UIView.animate(withDuration: duration, delay: delay * 2, animations: {
             self.thirdStarView.alpha = 1
         }) { _ in
-            completion?()
+            completion?(self)
         }
     }
     
-    private func scaleAnimation(with duration: TimeInterval, scale factor: CGFloat, completion: (() -> Void)? = nil) {
+    private func scaleAnimation(with duration: TimeInterval, scale factor: CGFloat, completion: ((VAStars) -> Void)? = nil) {
         let transform = CGAffineTransform(scaleX: factor, y: factor)
         
         let size = configuration.starSize
@@ -150,7 +151,7 @@ class VAStars: UIView {
             self.secondStarView.transform = .identity
             self.thirdStarView.transform = .identity
         }) { _ in
-            completion?()
+            completion?(self)
         }
     }
     
