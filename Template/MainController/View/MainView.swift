@@ -26,7 +26,7 @@ class MainView: UIView {
     
     let redStarsView: VAStars = {
         let configuration = VAStarsConfiguration(
-            starSize: 40,
+            starSize: 15,
             borderColor: .init(hex: 0x929292),
             defaultColor: .init(hex: 0x929292),
             animationType: .fade(duration: 0.3, deley: 0.15)
@@ -37,7 +37,7 @@ class MainView: UIView {
     
     let yellowStarsView: VAStars = {
         let configuration = VAStarsConfiguration(
-            starSize: 40,
+            starSize: 15,
             borderColor: .init(hex: 0x929292),
             defaultColor: .init(hex: 0x929292),
             animationType: .fade(duration: 0.3, deley: 0.15)
@@ -48,7 +48,7 @@ class MainView: UIView {
     
     let greenStarsView: VAStars = {
         let configuration = VAStarsConfiguration(
-            starSize: 40,
+            starSize: 15,
             borderColor: .init(hex: 0x929292),
             defaultColor: .init(hex: 0x929292),
             animationType: .fade(duration: 0.3, deley: 0.15)
