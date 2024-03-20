@@ -159,16 +159,16 @@ class VAStars: UIView {
         firstStarView.translatesAutoresizingMaskIntoConstraints = false
         secondStarView.translatesAutoresizingMaskIntoConstraints = false
         thirdStarView.translatesAutoresizingMaskIntoConstraints = false
-                
+        
         NSLayoutConstraint.activate([
             firstStarView.leftAnchor.constraint(equalTo: leftAnchor),
             firstStarView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            firstStarView.rightAnchor.constraint(equalTo: secondStarView.leftAnchor, constant: -configuration.hSpacing),
+            firstStarView.rightAnchor.constraint(equalTo: secondStarView.leftAnchor),
             
             secondStarView.topAnchor.constraint(equalTo: topAnchor),
-            secondStarView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: configuration.vSpacing),
+            secondStarView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -configuration.starSize * 0.3),
             
-            thirdStarView.leftAnchor.constraint(equalTo: secondStarView.rightAnchor, constant: configuration.hSpacing),
+            thirdStarView.leftAnchor.constraint(equalTo: secondStarView.rightAnchor),
             thirdStarView.rightAnchor.constraint(equalTo: rightAnchor),
             thirdStarView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])

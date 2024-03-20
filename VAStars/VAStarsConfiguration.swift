@@ -2,8 +2,6 @@ import UIKit
 
 struct VAStarsConfiguration {
     var starSize: CGFloat = 40.0
-    var hSpacing: CGFloat = 0
-    var vSpacing: CGFloat = -12
     var borderColor: UIColor
     var defaultColor: UIColor
     
