@@ -4,47 +4,21 @@ class VAStars: UIView {
     
     private var configuration: VAStarsConfiguration
     
-    private lazy var firstStarView: VASingleStar = {
-        let view = VASingleStar(
-            starSize: configuration.starSize,
-            animated: configuration.animationType != .none
-        )
-        view.alpha = configuration.animationType != .none ? 0 : 1
-        view.setDefault(borderColor: configuration.borderColor, starColor: configuration.defaultColor)
-
-        return view
-    }()
-    
-    private lazy var secondStarView: VASingleStar = {
-        let view = VASingleStar(
-            starSize: configuration.starSize,
-            animated: configuration.animationType != .none
-        )
-        view.alpha = configuration.animationType != .none ? 0 : 1
-        view.setDefault(borderColor: configuration.borderColor, starColor: configuration.defaultColor)
-
-        return view
-    }()
-    
-    private lazy var thirdStarView: VASingleStar = {
-        let view = VASingleStar(
-            starSize: configuration.starSize,
-            animated: configuration.animationType != .none
-        )
-        view.alpha = configuration.animationType != .none ? 0 : 1
-        view.setDefault(borderColor: configuration.borderColor, starColor: configuration.defaultColor)
-        
-        return view
-    }()
+    private var stars: [VASingleStar] = []
+    private var firstStarView: VASingleStar { stars[0] }
+    private var secondStarView: VASingleStar { stars[1] }
+    private var thirdStarView: VASingleStar { stars[2] }
     
     init(configuration: VAStarsConfiguration) {
         self.configuration = configuration
         super.init(frame: .zero)
         
+        setupStars()
+        
         addSubview(firstStarView)
         addSubview(secondStarView)
         addSubview(thirdStarView)
-
+        
         setupConstraints()
     }
     
@@ -52,106 +26,135 @@ class VAStars: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func show(animated flag: Bool, completion: ((VAStars) -> Void)? = nil) {
+    func setVisibility(animated flag: Bool, isHidden: Bool, completion: ((VAStars) -> Void)? = nil) {
         if !flag {
-            noAnimation(completion: completion)
+            noAnimation(isHidden: isHidden, completion: completion)
             return
         }
         
         switch configuration.animationType {
         case .fade(let duration, let delay):
-            fadeAnimation(with: duration, delay: delay, completion: completion)
+            fadeAnimation(with: duration, delay: delay, isHidden: isHidden, completion: completion)
         case .scale(let duration, let factor):
-            scaleAnimation(with: duration, scale: factor, completion: completion)
+            scaleAnimation(with: duration, scale: factor, isHidden: isHidden, completion: completion)
         case .none:
-            noAnimation(completion: completion)
+            noAnimation(isHidden: isHidden, completion: completion)
         }
     }
     
     /// Метод для анимации падающий звезд
     /// - Parameters:
-    ///   - type: Сколько звезд упадет и с каким цветом будет каждая из звезд
-    ///   - flag: Нужна ли анимация для падения звезд
+    ///   - type: Определяет количество падающих звезд и их цвета.
+    ///   - animated: Флаг, указывающий на необходимость анимации падения звезд
     ///   - firstDelay: Задержка перед падением первой звезды
     ///   - delay: Задержка перед падением следующей звезды
-    ///   - completion: Метод вызывается после анимации падения и анимации заливки всех цветов
-    func fillStars(fill type: VAStarsConfiguration.FillType, animated flag: Bool, firstDelay: TimeInterval, delay: TimeInterval, completion: @escaping () -> Void) {
+    ///   - completion: Замыкание, вызываемое после завершения анимации
+    func animateFallingStars(fill type: VAStarsConfiguration.FillType, animated flag: Bool, firstDelay: TimeInterval, delay: TimeInterval, completion: @escaping () -> Void) {
+        func animateStarsFill(_ count: Int, colors: [UIColor]) {
+            guard !stars.isEmpty else { return }
+            
+            let lastStarIndex = count - 1
+            
+            for index in 0...lastStarIndex {
+                guard index < stars.count else { return }
+                
+                stars[index].show(animated: flag, delay: delay * Double(index)) { [weak self] in
+                    guard let self = self, !colors.isEmpty else { return }
+                    
+                    if index == lastStarIndex {
+                        for index in 0...lastStarIndex {
+                            let color = colors.count > index ? colors[index] : colors.last!
+                            self.stars[index].animate(toColor: color, delay: delay * Double(index)) {
+                                if index == lastStarIndex {
+                                    completion()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + firstDelay) {
             switch type {
             case .zero: break
-            case .one(let first):
-                self.firstStarView.show(animated: flag) { [weak self] in
-                    self?.firstStarView.animate(delay: 0.0, color: first, completion: completion)
-                }
-                
-            case .two(let first, let second):
-                self.firstStarView.show(animated: flag)
-                self.secondStarView.show(animated: flag, delay: delay) { [weak self] in
-                    guard let self = self else { return }
-                    
-                    self.firstStarView.animate(delay: 0.0, color: first)
-                    self.secondStarView.animate(delay: 0.15, color: second, completion: completion)
-                }
-                
-            case .three(let first, let second, let third):
-                self.firstStarView.show(animated: flag)
-                self.secondStarView.show(animated: flag, delay: delay)
-                self.thirdStarView.show(animated: flag, delay: delay * 2) { [weak self] in
-                    guard let self = self else { return }
-                    
-                    self.firstStarView.animate(delay: 0.0, color: first)
-                    self.secondStarView.animate(delay: 0.15, color: second)
-                    self.thirdStarView.animate(delay: 0.3, color: third, completion: completion)
-                }
+            case .one(let color): animateStarsFill(1, colors: [color])
+            case .two(let colors): animateStarsFill(2, colors: colors)
+            case .three(let colors): animateStarsFill(3, colors: colors)
             }
         }
     }
     
-    private func noAnimation(completion: ((VAStars) -> Void)?) {
-        firstStarView.alpha = 1
-        secondStarView.alpha = 1
-        thirdStarView.alpha = 1
+    private func noAnimation(isHidden: Bool, completion: ((VAStars) -> Void)?) {
+        let alpha: CGFloat = isHidden ? 0 : 1
+        
+        for star in stars {
+            star.alpha = alpha
+            if isHidden {
+                star.hideFill()
+            }
+        }
         
         completion?(self)
     }
     
-    private func fadeAnimation(with duration: TimeInterval, delay: TimeInterval, completion: ((VAStars) -> Void)? = nil) {
-        UIView.animate(withDuration: duration) {
-            self.firstStarView.alpha = 1
-        }
+    private func fadeAnimation(with duration: TimeInterval, delay: TimeInterval, isHidden: Bool, completion: ((VAStars) -> Void)? = nil) {
+        let stars = isHidden ? stars.reversed() : stars
+        let curve: UIView.AnimationOptions = isHidden ? .curveEaseOut : .curveEaseIn
+        let alpha: CGFloat = isHidden ? 0 : 1
         
-        UIView.animate(withDuration: duration, delay: delay) {
-            self.secondStarView.alpha = 1
-        }
-        
-        UIView.animate(withDuration: duration, delay: delay * 2, animations: {
-            self.thirdStarView.alpha = 1
-        }) { _ in
-            completion?(self)
+        stars.enumerated().forEach { index, star in
+            UIView.animate(withDuration: duration, delay: delay * TimeInterval(index), options: curve, animations: {
+                star.alpha = alpha
+            }) { _ in
+                if isHidden {
+                    star.hideFill()
+                }
+                
+                if index == stars.count - 1 {
+                    completion?(self)
+                }
+            }
         }
     }
+
     
-    private func scaleAnimation(with duration: TimeInterval, scale factor: CGFloat, completion: ((VAStars) -> Void)? = nil) {
+    private func scaleAnimation(with duration: TimeInterval, scale factor: CGFloat, isHidden: Bool, completion: ((VAStars) -> Void)? = nil) {
         let transform = CGAffineTransform(scaleX: factor, y: factor)
         
         let size = configuration.starSize
         let scaleSize = size * factor
         let tx = (size - scaleSize + scaleSize/3) / factor
-                        
-        firstStarView.transform = transform.translatedBy(x: tx, y: 0)
-        secondStarView.transform = transform
-        thirdStarView.transform = transform.translatedBy(x: -tx, y: 0)
+        let curve: UIView.AnimationOptions = isHidden ? .curveEaseIn : .curveEaseOut
         
-        UIView.animate(withDuration: duration, delay: 0, options: .curveEaseOut, animations: {
-            self.firstStarView.alpha = 1
-            self.secondStarView.alpha = 1
-            self.thirdStarView.alpha = 1
+        firstStarView.transform = isHidden ? .identity : transform.translatedBy(x: tx, y: 0)
+        secondStarView.transform = isHidden ? .identity : transform
+        thirdStarView.transform = isHidden ? .identity : transform.translatedBy(x: -tx, y: 0)
+        
+        UIView.animate(withDuration: duration, delay: 0, options: curve, animations: {
+            self.stars.forEach { $0.alpha = isHidden ? 0 : 1 }
             
-            self.firstStarView.transform = .identity
-            self.secondStarView.transform = .identity
-            self.thirdStarView.transform = .identity
+            self.firstStarView.transform = isHidden ? transform.translatedBy(x: tx, y: 0) : .identity
+            self.secondStarView.transform = isHidden ? transform : .identity
+            self.thirdStarView.transform = isHidden ? transform.translatedBy(x: -tx, y: 0) : .identity
         }) { _ in
+            if isHidden {
+                self.stars.forEach { $0.hideFill() }
+            }
             completion?(self)
+        }
+    }
+    
+    private func setupStars() {
+        for _ in 0...2 {
+            let view = VASingleStar(
+                starSize: configuration.starSize,
+                animated: configuration.animationType != .none
+            )
+            view.alpha = 0
+            view.setDefault(borderColor: configuration.borderColor, starColor: configuration.defaultColor)
+            
+            stars.append(view)
         }
     }
     
@@ -159,7 +162,7 @@ class VAStars: UIView {
         firstStarView.translatesAutoresizingMaskIntoConstraints = false
         secondStarView.translatesAutoresizingMaskIntoConstraints = false
         thirdStarView.translatesAutoresizingMaskIntoConstraints = false
-        
+                
         NSLayoutConstraint.activate([
             firstStarView.leftAnchor.constraint(equalTo: leftAnchor),
             firstStarView.bottomAnchor.constraint(equalTo: bottomAnchor),

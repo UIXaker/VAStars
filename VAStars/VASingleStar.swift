@@ -5,7 +5,7 @@ class VASingleStar: UIView {
     var isAnimating = false
     
     private let starSize: CGFloat
-    
+    private var defaultColor: UIColor = .white
     private var fillStarYAnchorConstraint: NSLayoutConstraint!
     
     private let borderStarImageView: UIImageView = {
@@ -40,7 +40,7 @@ class VASingleStar: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func show(animated flag: Bool = false, delay: TimeInterval = 0.0, comletion: (() -> Void)? = nil) {
+    func show(animated flag: Bool = false, delay: TimeInterval = 0.0, comletion: (() -> Void)? = nil) {        
         if !flag {
             fillStarImageView.alpha = 1
             comletion?()
@@ -59,9 +59,16 @@ class VASingleStar: UIView {
         }
     }
     
-    func animate(withDuration duration: TimeInterval = 0.3, delay: TimeInterval, color: UIColor, completion: (() -> Void)? = nil) {
+    func hideFill() {
+        fillStarImageView.alpha = 0
+        fillStarImageView.tintColor = defaultColor
+    }
+    
+    func animate(toColor: UIColor, withDuration duration: TimeInterval = 0.3, delay: TimeInterval, completion: (() -> Void)? = nil) {
+        defaultColor = fillStarImageView.tintColor
+        
         UIView.animate(withDuration: duration, delay: delay, animations: {
-            self.fillStarImageView.tintColor = color
+            self.fillStarImageView.tintColor = toColor
         }) { _ in
             completion?()
         }

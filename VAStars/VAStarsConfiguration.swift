@@ -24,7 +24,7 @@ struct VAStarsConfiguration {
     enum FillType {
         case zero
         case one(UIColor)
-        case two(UIColor, UIColor)
-        case three(UIColor, UIColor, UIColor)
+        case two([UIColor])
+        case three([UIColor])
     }
 }

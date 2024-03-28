@@ -6,17 +6,12 @@ class ViewController: UIViewController {
     override func loadView() { view = MainView() }
     
     let whiteFillConf: VAStarsConfiguration.FillType = .zero
-    let whiteFullFillConf: VAStarsConfiguration.FillType = .three(.white, .white, .white)
+    let whiteFullFillConf: VAStarsConfiguration.FillType = .three([.white])
     let redFillConf: VAStarsConfiguration.FillType = .one(.init(hex: 0xF63E28))
-    let yellowFillConf: VAStarsConfiguration.FillType = .two(
-        .init(hex: 0xF6B928),
-        .init(hex: 0xF6B928)
-    )
-    let greenFillConf: VAStarsConfiguration.FillType = .three(
-        .init(hex: 0x1DB954),
-        .init(hex: 0x1DB954),
-        .init(hex: 0x1DB954)
-    )
+    let yellowFillConf: VAStarsConfiguration.FillType = .two([.init(hex: 0xF6B928)])
+    let greenFillConf: VAStarsConfiguration.FillType = .three([.init(hex: 0x1DB954)])
+    
+    var isHidden = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,56 +19,66 @@ class ViewController: UIViewController {
         let gesture = UITapGestureRecognizer(target: self, action: #selector(viewDidTapped))
         mainView.addGestureRecognizer(gesture)
     }
-
+    
     @objc private func viewDidTapped() {
-        mainView.whiteStarsView.show(animated: true)
+        isHidden.toggle()
         
-        mainView.whiteFullStarsView.show(animated: true) { [weak self] stars in
+        mainView.whiteStarsView.setVisibility(animated: true, isHidden: isHidden)
+        
+        mainView.whiteFullStarsView.setVisibility(animated: true, isHidden: isHidden) { [weak self] stars in
             guard let self = self else { return }
             
-            stars.fillStars(
-                fill: self.whiteFullFillConf,
-                animated: true,
-                firstDelay: 0.3,
-                delay: 0.15,
-                completion: { }
-            )
+            if !isHidden {
+                stars.animateFallingStars(
+                    fill: self.whiteFullFillConf,
+                    animated: true,
+                    firstDelay: 0.3,
+                    delay: 0.15,
+                    completion: { }
+                )
+            }
         }
         
-        mainView.redStarsView.show(animated: true) { [weak self] stars in
+        mainView.redStarsView.setVisibility(animated: true, isHidden: isHidden) { [weak self] stars in
             guard let self = self else { return }
             
-            stars.fillStars(
-                fill: self.redFillConf,
-                animated: true,
-                firstDelay: 0.3,
-                delay: 0.15,
-                completion: { }
-            )
+            if !isHidden {
+                stars.animateFallingStars(
+                    fill: self.redFillConf,
+                    animated: true,
+                    firstDelay: 0.3,
+                    delay: 0.15,
+                    completion: { }
+                )
+            }
         }
-        
-        mainView.yellowStarsView.show(animated: true) { [weak self] stars in
+  
+        mainView.yellowStarsView.setVisibility(animated: true, isHidden: isHidden) { [weak self] stars in
             guard let self = self else { return }
-            
-            stars.fillStars(
-                fill: self.yellowFillConf,
-                animated: true,
-                firstDelay: 0.3,
-                delay: 0.15,
-                completion: { }
-            )
+              
+            if !isHidden {
+                stars.animateFallingStars(
+                    fill: self.yellowFillConf,
+                    animated: true,
+                    firstDelay: 0.3,
+                    delay: 0.15,
+                    completion: { }
+                )
+            }
         }
-        
-        mainView.greenStarsView.show(animated: true) { [weak self] stars in
+ 
+        mainView.greenStarsView.setVisibility(animated: true, isHidden: isHidden) { [weak self] stars in
             guard let self = self else { return }
-            
-            stars.fillStars(
-                fill: self.greenFillConf,
-                animated: true,
-                firstDelay: 0.3,
-                delay: 0.15,
-                completion: { }
-            )
+              
+            if !isHidden {
+                stars.animateFallingStars(
+                    fill: self.greenFillConf,
+                    animated: true,
+                    firstDelay: 0.3,
+                    delay: 0.15,
+                    completion: { }
+                )
+            }
         }
     }
 }
