@@ -23,9 +23,9 @@ class ViewController: UIViewController {
     @objc private func viewDidTapped() {
         isHidden.toggle()
         
-        mainView.whiteStarsView.setVisibility(animated: true, isHidden: isHidden)
+        mainView.whiteStarsView.setVisibility(animated: true, with: .scale(duration: 0.3, factor: 0.6), isHidden: isHidden)
         
-        mainView.whiteFullStarsView.setVisibility(animated: true, isHidden: isHidden) { [weak self] stars in
+        mainView.whiteFullStarsView.setVisibility(animated: true, with: .fade(duration: 0.3, deley: 0.15), isHidden: isHidden) { [weak self] stars in
             guard let self = self else { return }
             
             if !isHidden {
@@ -39,7 +39,7 @@ class ViewController: UIViewController {
             }
         }
         
-        mainView.redStarsView.setVisibility(animated: true, isHidden: isHidden) { [weak self] stars in
+        mainView.redStarsView.setVisibility(animated: true, with: .fade(duration: 0.3, deley: 0.15), isHidden: isHidden) { [weak self] stars in
             guard let self = self else { return }
             
             if !isHidden {
@@ -53,7 +53,7 @@ class ViewController: UIViewController {
             }
         }
   
-        mainView.yellowStarsView.setVisibility(animated: true, isHidden: isHidden) { [weak self] stars in
+        mainView.yellowStarsView.setVisibility(animated: true, with: .scale(duration: 0.3, factor: 0.6), isHidden: isHidden) { [weak self] stars in
             guard let self = self else { return }
               
             if !isHidden {
@@ -67,7 +67,7 @@ class ViewController: UIViewController {
             }
         }
  
-        mainView.greenStarsView.setVisibility(animated: true, isHidden: isHidden) { [weak self] stars in
+        mainView.greenStarsView.setVisibility(animated: true, with: .fade(duration: 0.3, deley: 0.15), isHidden: isHidden) { [weak self] stars in
             guard let self = self else { return }
               
             if !isHidden {

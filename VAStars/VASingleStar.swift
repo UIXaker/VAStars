@@ -1,16 +1,13 @@
 import UIKit
 
 class VASingleStar: UIView {
-
-    var isAnimating = false
     
     private let starSize: CGFloat
     private var defaultColor: UIColor = .white
-    private var fillStarYAnchorConstraint: NSLayoutConstraint!
     
     private let borderStarImageView: UIImageView = {
         let view = UIImageView()
-        view.image = UIImage(named: "star-border")
+        view.image = UIImage(named: "star-border")?.withRenderingMode(.alwaysTemplate)
         view.contentMode = .scaleAspectFit
         
         return view
@@ -18,17 +15,16 @@ class VASingleStar: UIView {
     
     private let fillStarImageView: UIImageView = {
         let view = UIImageView()
-        view.image = UIImage(named: "star-fill")
+        view.image = UIImage(named: "star-fill")?.withRenderingMode(.alwaysTemplate)
         view.contentMode = .scaleAspectFit
+        view.alpha = 0
         
         return view
     }()
     
-    init(starSize: CGFloat, animated flag: Bool = false) {
+    init(starSize: CGFloat) {
         self.starSize = starSize
         super.init(frame: .zero)
-        
-        fillStarImageView.alpha = flag ? 0 : 1
         
         addSubview(borderStarImageView)
         addSubview(fillStarImageView)
@@ -50,11 +46,9 @@ class VASingleStar: UIView {
         fillStarImageView.transform = CGAffineTransform(translationX: 0, y: -starSize/1.5)
         
         UIView.animate(withDuration: 0.66, delay: delay, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.7, options: .curveEaseInOut) {
-            self.isAnimating = true
             self.fillStarImageView.alpha = 1
             self.fillStarImageView.transform = .identity
         } completion: { _ in
-            self.isAnimating = false
             comletion?()
         }
     }

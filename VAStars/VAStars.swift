@@ -26,13 +26,13 @@ class VAStars: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setVisibility(animated flag: Bool, isHidden: Bool, completion: ((VAStars) -> Void)? = nil) {
+    func setVisibility(animated flag: Bool, with type: AnimationType, isHidden: Bool, completion: ((VAStars) -> Void)? = nil) {
         if !flag {
             noAnimation(isHidden: isHidden, completion: completion)
             return
         }
         
-        switch configuration.animationType {
+        switch type {
         case .fade(let duration, let delay):
             fadeAnimation(with: duration, delay: delay, isHidden: isHidden, completion: completion)
         case .scale(let duration, let factor):
@@ -147,10 +147,7 @@ class VAStars: UIView {
     
     private func setupStars() {
         for _ in 0...2 {
-            let view = VASingleStar(
-                starSize: configuration.starSize,
-                animated: configuration.animationType != .none
-            )
+            let view = VASingleStar(starSize: configuration.starSize)
             view.alpha = 0
             view.setDefault(borderColor: configuration.borderColor, starColor: configuration.defaultColor)
             
