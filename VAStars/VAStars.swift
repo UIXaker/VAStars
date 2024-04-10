@@ -140,6 +140,7 @@ class VAStars: UIView {
         }) { _ in
             if isHidden {
                 self.stars.forEach { $0.hideFill() }
+                self.stars.forEach { $0.transform = .identity }
             }
             completion?(self)
         }

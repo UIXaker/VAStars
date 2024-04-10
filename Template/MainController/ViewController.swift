@@ -23,9 +23,11 @@ class ViewController: UIViewController {
     @objc private func viewDidTapped() {
         isHidden.toggle()
         
+        let anime: AnimationType = !isHidden ? .scale(duration: 0.3, factor: 0.6) : .fade(duration: 0.3, deley: 0.15)
+        
         mainView.whiteStarsView.setVisibility(animated: true, with: .scale(duration: 0.3, factor: 0.6), isHidden: isHidden)
         
-        mainView.whiteFullStarsView.setVisibility(animated: true, with: .fade(duration: 0.3, deley: 0.15), isHidden: isHidden) { [weak self] stars in
+        mainView.whiteFullStarsView.setVisibility(animated: true, with: anime, isHidden: isHidden) { [weak self] stars in
             guard let self = self else { return }
             
             if !isHidden {
@@ -67,7 +69,7 @@ class ViewController: UIViewController {
             }
         }
  
-        mainView.greenStarsView.setVisibility(animated: true, with: .fade(duration: 0.3, deley: 0.15), isHidden: isHidden) { [weak self] stars in
+        mainView.greenStarsView.setVisibility(animated: true, with: anime, isHidden: isHidden) { [weak self] stars in
             guard let self = self else { return }
               
             if !isHidden {
